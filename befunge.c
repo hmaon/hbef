@@ -274,7 +274,10 @@ void bef_do (bef_interp *i, char c) {
 		if (btrace) printf("%d -> %d,%d", o, m, n);
 		if (n < 0 || n >= i -> size .y || m < 0 || m >= i -> size .x) {
 			printf ("%d, %d out of bounds at %d, %d\n", m, n, i -> ip .x, i -> ip .y);
-		} else  i -> mem[n][m] = o;
+		} else {
+			signed char co = o;
+			i -> mem[n][m] = (i -> mode && m93) ? co : o;
+		}
 		break;
 
 	case '&':
@@ -610,6 +613,7 @@ int bef_load93 (bef_interp *i, char *name) {
 		puts ("could not open file.");
 		return -1;
 	}
+	i -> mode |= m93;
 	do {
 		n = fscanf (f, "%80[^\n]", line);
 		m = fscanf (f, "%2[\n]", &(line[85]));
@@ -622,6 +626,7 @@ int bef_load93 (bef_interp *i, char *name) {
 		}
 		++y;
 	} while (1);
+
 }
 
 /* load hbef formatted befunge source into new interpreter */
