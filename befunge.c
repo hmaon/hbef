@@ -5,6 +5,7 @@
    projects without the author's permission is prohibited. */
 /* this program is guaranteed not to be suitable for any particular purpose */
 /* talk to me. gvelicha@wam.umd.edu */
+/* greets to building and badzen. keep the flame alive. */
 
 #include <stdlib.h>
 #include <stdio.h>
