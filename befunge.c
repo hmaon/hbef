@@ -4,7 +4,7 @@
    permission of the autor is prohibited. Inclusion of this work in any non-GPL 
    projects without the author's permission is prohibited. */
 /* this program is guaranteed not to be suitable for any particular purpose */
-/* talk to me. gvelicha@wam.umd.edu */
+/* talk to me. hmaon@bumba.net */
 /* greets to building and badzen. keep the flame alive. */
 
 #include <stdlib.h>
