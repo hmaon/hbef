@@ -19,8 +19,7 @@
 #include "befunge.h"
 
 
-int trace = 0;
-int tick = 0, noptick = 0, stringtick = 0;
+int tick = 0, noptick = 0, stringtick = 0, btrace = 0;
 
 
 void strepl (stackt *i, int n) {
@@ -62,7 +61,7 @@ int stpop (stackt *i) {
 	register int n;
 	n = (i -> stack) [i -> sp];
 	if (i -> sp > 0) {
-		if (trace) printf ("i -> sp == %d, dec pending.\n", i -> sp);
+		if (btrace) printf ("i -> sp == %d, dec pending.\n", i -> sp);
 		i -> sp --;
 	}
 	return n;
@@ -218,11 +217,11 @@ void bef_do (bef_interp *i, char c) {
 
 	case '"':
 		i -> mode = i -> mode ^ mSTRING;
-		if (trace) puts ("mode change mSTRING");
+		if (btrace) puts ("mode change mSTRING");
 		break;
 
 	case ':':
-		if (!trace ) {
+		if (!btrace ) {
 			push (i, bpeek (i));
 		} else {
 			o = bpeek (i);
@@ -272,6 +271,7 @@ void bef_do (bef_interp *i, char c) {
 		n = pop (i);
 		m = pop (i);
 		o = pop (i);
+		if (btrace) printf("%d -> %d,%d", o, m, n);
 		if (n < 0 || n >= i -> size .y || m < 0 || m >= i -> size .x) {
 			printf ("%d, %d out of bounds at %d, %d\n", m, n, i -> ip .x, i -> ip .y);
 		} else  i -> mem[n][m] = o;
@@ -299,7 +299,7 @@ void bef_do (bef_interp *i, char c) {
 	case 'j':
 		n = pop (i);
 		m = pop (i);
-		if (trace) printf ("from (%d,%d) to (%d,%d)\n", i -> ip.x, i -> ip.y, m, n);
+		if (btrace) printf ("from (%d,%d) to (%d,%d)\n", i -> ip.x, i -> ip.y, m, n);
 		i -> ip .x = m;
 		i -> ip .y = n;
 		bef_checkpc (i);
@@ -352,7 +352,7 @@ void bef_do (bef_interp *i, char c) {
 	case 's':
 		n = pop (i);
 		m = pop (i);
-		if (trace) printf ("from (%d,%d) to (%d,%d)\n", i -> ip.x, i -> ip.y, m, n);
+		if (btrace) printf ("from (%d,%d) to (%d,%d)\n", i -> ip.x, i -> ip.y, m, n);
 		stpush (i -> call, i -> delta .x);
 		stpush (i -> call, i -> delta .y);
 		stpush (i -> call, i -> ip .x);
@@ -366,7 +366,7 @@ void bef_do (bef_interp *i, char c) {
 	case 'S':
 		n = pop (i);
 		m = pop (i);
-		if (trace) printf ("from (%d,%d) to (%d,%d)\n", i -> ip.x, i -> ip.y, m, n);
+		if (btrace) printf ("from (%d,%d) to (%d,%d)\n", i -> ip.x, i -> ip.y, m, n);
 		stpush (i -> call, i -> delta .x);
 		stpush (i -> call, i -> delta .y);
 		stpush (i -> call, i -> ip .x);
@@ -380,7 +380,7 @@ void bef_do (bef_interp *i, char c) {
 	case 'r':
 		n = stpop (i -> call);
 		m = stpop (i -> call);
-		if (trace) printf ("from (%d,%d) to (%d,%d)\n", i -> ip.x, i -> ip.y, m, n);
+		if (btrace) printf ("from (%d,%d) to (%d,%d)\n", i -> ip.x, i -> ip.y, m, n);
 		i -> ip .x = m;
 		i -> ip .y = n;
 		i -> delta .y = stpop (i -> call);
@@ -485,13 +485,7 @@ bef_interp *bef_allocinterp (int stack, int w, int h) {
 	i -> size.x = w;
 	i -> size.y = h;
 
-	i -> ip.x = 0;
-	i -> ip.y = 0;
-
-	i -> delta.x = 1;
-	i -> delta.y = 0;
-
-	i -> mode = 0;
+	bef_reset(i);
 
 	return i;
 }
@@ -502,8 +496,8 @@ int bef_step (bef_interp *i) {
 	/* get current instruction */
 	c = i -> mem[i -> ip .y][i -> ip .x];
 
-	if (trace) {	
-		printf (".trace. op: %c (%d)  at %d,%d   mode %d\n", c, c, i -> ip .x, i -> ip .y, i -> mode);
+	if (btrace) {	
+		printf (".btrace. op: %c (%d)  at %d,%d   mode %d\n", c, c, i -> ip .x, i -> ip .y, i -> mode);
 	}
 	
 	if (i -> mode & mSTRING && (c != '"' || i -> prevstrchar == '\\')) {
@@ -524,8 +518,8 @@ int bef_step (bef_interp *i) {
 	}
 
 	if (i -> mode & mTERM) {
-		if (trace) puts ("mTERM");
-		return 1;
+		if (btrace) puts ("mTERM");
+		return pop(i);
 	}
 
 	if (! i -> teleport) {
@@ -539,9 +533,19 @@ int bef_step (bef_interp *i) {
 int bef_run (bef_interp *i) {
 	int n;
 
-	while (!(n = bef_step (i))) ++tick;
+	while (! (i -> mode & mTERM)) n = bef_step (i), ++tick;
 
 	return n;
+}
+
+void bef_reset (bef_interp *i) {
+	i -> ip.x = 0;
+	i -> ip.y = 0;
+
+	i -> delta.x = 1;
+	i -> delta.y = 0;
+
+	i -> mode = 0;
 }
 
 void bef_free (bef_interp *i) {
@@ -578,7 +582,7 @@ int bef_loadcode (bef_interp *i, FILE *f) {
 	for (y = 0; y < i -> size .y; ++y) {
 		for (x = 0; x < i -> size .x; ++x) {
 			c = fgetc (f);
-			if (trace) printf ("%c", c);
+			if (btrace) printf ("%c", c);
 			if (c == EOF) return y;
 			if (c == '\n') break;
 			i -> mem [y][x] = c;
@@ -610,7 +614,7 @@ int bef_load93 (bef_interp *i, char *name) {
 		n = fscanf (f, "%80[^\n]", line);
 		m = fscanf (f, "%2[\n]", &(line[85]));
 		if (n != 0 && n != EOF) {
-			if (trace) puts (line);
+			if (btrace) puts (line);
 			strtoicpy ((i -> mem)[y], line);
 		} else {
 			fclose (f);
@@ -639,21 +643,21 @@ bef_interp *bef_loadh (char *name) {
 
 	while ((n = fscanf (f, "%80s", command)) != EOF) {
 		if (n) {
-			if (trace) printf ("command: %s\n", command);
+			if (btrace) printf ("command: %s\n", command);
 			if (!strcmp (command, "wid")) {
 				fscanf (f, "%d", &w);
-				if (trace) printf ("w == %d\n", w);
+				if (btrace) printf ("w == %d\n", w);
 			} else if (!strcmp (command, "hei")) {
 				fscanf (f, "%d", &h);
-				if (trace) printf ("h == %d\n", h);
+				if (btrace) printf ("h == %d\n", h);
 			} else if (!strcmp (command, "stack")) {
 				fscanf (f, "%d", &m);
-				if (trace) printf ("stack == %d\n", m);
+				if (btrace) printf ("stack == %d\n", m);
 			} else if (!strcmp (command, "hb")) {
 				i = bef_allocinterp (m, w, h);
 				do { n = fgetc (f); } while (n != '\n' && n != EOF);
 				n = bef_loadcode (i, f);
-				if (trace) printf ("bef_loadcode() returned %d\n", n);
+				if (btrace) printf ("bef_loadcode() returned %d\n", n);
 				return i;
 			}
 		}
@@ -680,8 +684,8 @@ int main (int argc, char **argv) {
 	char *file = "test.hbf";
 
 	for (r = 1; r < argc; ++r) {
-		if (!strcmp (argv[r], "--trace")) {
-			trace = -1;
+		if (!strcmp (argv[r], "--btrace")) {
+			btrace = -1;
 		} else if (!strcmp (argv[r], "--93")) {
 			load93 = -1;
 		} else if (!strcmp (argv[r], "--report")) {
