@@ -1,4 +1,9 @@
 /* copyright 1999 Greg Velichansky */
+/* This work is publically displayed for your personal amusement.
+   Use of this work for any commercial or otherwise for-profit purposes without
+   permission of the autor is prohibited. Inclusion of this work in any non-GPL 
+   projects without the author's permission is prohibited. */
+/* this program is guaranteed not to be suitable for any particular purpose */
 /* talk to me. gvelicha@wam.umd.edu */
 
 #include <stdlib.h>
