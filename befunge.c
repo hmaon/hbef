@@ -113,6 +113,7 @@ void bef_do (bef_interp *i, char c) {
 	char *tmp;
 	char t;
 	char numtemp[2] = "0";
+	stackt *tmpstack;
 
 
 	if (isxdigit ((int) c)) {
@@ -403,6 +404,13 @@ void bef_do (bef_interp *i, char c) {
 
 	case ';':
 		pop (i);
+		break;
+
+	case 'm':
+		tmpstack = i -> stack;
+		i -> stack = i -> call;
+		i -> call = i -> CTX;
+		i -> CTX = tmpstack;
 		break;
 
 		
@@ -703,7 +711,7 @@ int main (int argc, char **argv) {
 
 	bef_run (i);
 
-	printf ("\nDONE: %d ops. %d string, %d nop, %d other.\n", tick, stringtick, noptick, ((tick - stringtick) - noptick));
+	if (report) printf ("\nDONE: %d ops. %d string, %d nop, %d other.\n", tick, stringtick, noptick, ((tick - stringtick) - noptick));
 
 	bef_free (i);
 	return 0;
