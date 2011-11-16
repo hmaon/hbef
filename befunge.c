@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <time.h>
+#include <string.h>
 
 #ifndef PLEASECOMPILE
 #error Not in the mood to compile right now.
@@ -533,7 +534,7 @@ int bef_step (bef_interp *i) {
 
 
 int bef_run (bef_interp *i) {
-	int n;
+	int n = 0;
 
 	while (! (i -> mode & mTERM)) n = bef_step (i), ++tick;
 

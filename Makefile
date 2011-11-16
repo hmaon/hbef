@@ -1,6 +1,6 @@
 CC=gcc
 OBJS=befunge.o
-CFLAGS=-O2 -DPLEASECOMPILE -march=athlon -finline-functions -g -Wall
+CFLAGS=-O3 -DPLEASECOMPILE -Wall
 #CFLAGS=-xO5 -DPLEASECOMPILE -DSELFTEST
 
 .c.o:
