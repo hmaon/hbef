@@ -5,7 +5,7 @@
    projects without the author's permission is prohibited. */
 /* this program is guaranteed not to be suitable for any particular purpose */
 /* talk to me. hmaon@bumba.net */
-/* greets to building and badzen. keep the flame alive. */
+/* j0! */
 
 #include <stdlib.h>
 #include <stdio.h>
