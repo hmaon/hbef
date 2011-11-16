@@ -1,0 +1,4 @@
+This is hbef or hBefunge. Please see the other text files for now.
+
+commandline.txt documents the command line options, duh.
+newops.txt documents the opcode bloat introduced in hbef.
