@@ -1,0 +1,10 @@
+#!hbef
+exit
+quit
+wid 80
+hei 25
+stack 1000
+hb
+v[  <
+v?.@
+>>1+^

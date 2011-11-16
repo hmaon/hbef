@@ -1,0 +1,15 @@
+>v>0!!|  vg00p00~<
+ >^   1  .       ,   
+v.+65<_  >>>v    &   
+f>59`.95`.a,#@e$.^   
+a.                   
+-/                   
+.^3*:a.-\12<         
+>"Z",27*3%.^         
+           
+Proper Behavior:          
+11 5 Z2 -1 33 0 1    
+0                  
+<input num->out char>
+<input char->out num>
+

@@ -393,7 +393,6 @@ void bef_do (bef_interp *i, char c) {
 			fprintf (stderr, "Damn! PC frozen by 'r'.\n");
 			exit (99);
 		}
-		/* i -> teleport = -1; ACK! NO! BAD Cut&Paste! :) */
 		break;
 
 	case 'x':

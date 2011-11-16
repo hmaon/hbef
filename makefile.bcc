@@ -1,0 +1,40 @@
+CC=bcc32
+LD=ilink32
+CP=copy
+RM=del
+
+OBJS=befunge.obj
+CFLAGS=-6 -DPLEASECOMPILE -tWC
+DLLCFLAGS=-6 -O2 -tWDE -j8 -w- -Ic:\Python\include -DPLEASECOMPILE -D_MSC_VER=123
+DLLLDFLAGS=-Gn -Gi -Tpd -aa -Le:\bcc\lib -L. -E05
+#-Lc:\Python\libs
+
+#CFLAGS=-xO5 -DPLEASECOMPILE -DSELFTEST
+
+.c.obj:
+	$(CC) $(CFLAGS) -DSELFTEST -c $<
+
+all: befungec.pyd befunge.exe
+
+befunge.exe: $(OBJS) befunge.h
+	$(CC) $(CFLAGS) $(OBJS) -o$@
+
+
+befunge_wrap.c: befunge.i
+	swig -python -shadow befunge.i
+
+py15omf.lib:
+	coff2omf c:\python\libs\python15.lib py15omf.lib
+
+befungec.pyd: befunge.i befunge.h py15omf.lib
+	$(CC) $(DLLCFLAGS) -c befunge.c
+	$(CC) $(DLLCFLAGS) -P -c befunge_wrap.c 
+	#ld -shared *.o -o befunge.so
+	$(LD) $(DLLLDFLAGS) $(OBJS) befunge_wrap.obj c0d32.obj, befungec.dll, befungec.map, import32.lib cw32mt.lib py15omf.lib, befungec.def,
+	$(CP) befungec.dll befungec.pyd
+	$(RM) $(OBJS)
+	#$(RM) *.obj
+
+
+clean:
+	$(RM) *.obj befungec.dll befungec.pyd befunge.exe

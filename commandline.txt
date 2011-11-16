@@ -1,0 +1,6 @@
+befunge [options] [file name]
+
+options:
+--93 Load a befunge93 formatted file. (no header or anything fancy.)
+--btrace Print debugging information as the program runs.
+--report Reports on the amount of different ops executed at program end.

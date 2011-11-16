@@ -1,0 +1,25 @@
+CTX is a stack of contexts, or coordinate pairs that are used for reference
+callstack is a stack for return addresses used by subroutine instructions
+
+j (jump)             <x> <y>           PC=(x,y)
+J (jump and turn)    <dx> <dy> <x> <y> PC=(x,y) delta=(dx,dy)
+h (hop)              <x> <y>           PC=(PC.x+x,PC.y+y)
+s (sub call)         <x> <y>           D,PC->callstack, PC=(x,y)
+S (rel. sub call)    <x> <y>           D,PC->callstack, PC=(CTX.x+x,CTX.y+y)
+r (return)           n/a               PC,D<-callstack
+
+[ (rotate left)      n/a               rotate left
+] (rotate right)     n/a               rotate right
+
+{ (dec, rl if neg)   <n>               <n - 1>; rotate left if negative
+} (dec, rr if neg)   <n>               <n - 1>; rotate right if negative
+
+o (dec, trmp. if <0) n/a               decrement, act as a # if negative
+
+G (rel. get)         <x> <y>           value at (CTX.x+x, CTX.y+y)
+P (rel. put)         <value> <x> <y>   stores value at (CTX.x+x, CTX.y+y)
+
+x (x marks the spot) n/a               PC->CTX
+X (unmarks it???)    n/a               discard top item on CTX stack
+
+m (merry-go-round)   rotates stacks... stack <- call <- CTX <- stack
