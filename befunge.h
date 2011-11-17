@@ -59,4 +59,6 @@ int bef_loadcode (bef_interp *, FILE *);
 int bef_load93 (bef_interp *, char *name);
 bef_interp *bef_loadh (char *name);
 
+extern int tick, noptick, stringtick, btrace;
+
 #endif

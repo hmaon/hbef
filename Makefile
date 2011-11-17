@@ -6,15 +6,17 @@ CFLAGS=-O3 -DPLEASECOMPILE -Wall
 .c.o:
 	$(CC) $(CFLAGS) -DSELFTEST -c $<
 
-all: hbef hbefc.so
+all: hbef _hbef.so
 
 hbef: $(OBJS) befunge.h
 	$(CC) $(CFLAGS) $(OBJS) -o $@
 
-hbefc.so: befunge.i befunge.h
+hbef.py: _hbef.so
+
+_hbef.so: befunge.i befunge.h
 	swig -python -shadow befunge.i
-	gcc $(CFLAGS) -c befunge.c befunge_wrap.c -I/usr/local/include -I/usr/include/python2.1
-	ld -shared *.o -o hbefc.so
+	gcc $(CFLAGS) -fPIC -c befunge.c befunge_wrap.c -I/usr/local/include `python-config --includes`
+	ld -shared *.o -o _hbef.so
 	rm *.o
 
 
