@@ -1,4 +1,0 @@
-#!/bin/sh
-swig -python befunge.i
-gcc -Wall -O2 -mpentium -c befunge.c befunge_wrap.c -I/usr/local/include -DPLEASECOMPILE -I/usr/local/include/python1.5
-ld -shared *.o -o befunge.so
