@@ -12,6 +12,7 @@
 #include <ctype.h>
 #include <time.h>
 #include <string.h>
+#include <sys/time.h>
 
 #ifndef PLEASECOMPILE
 #error Not in the mood to compile right now.
@@ -451,8 +452,18 @@ stackt *alloc_stackt (int stacksize) {
 bef_interp *bef_allocinterp (int stack, int w, int h) {
 	bef_interp *i;
 	int n;
+	struct timeval tv;
+	struct timezone tz;
+	int seed;
 
-	srandom (time (NULL));
+	gettimeofday(&tv, &tz);
+	seed = tv.tv_sec ^ tv.tv_usec
+#ifdef _linux
+	^ (int)getpid()
+#endif
+	;
+	
+	srandom (seed);
 
 	i = malloc (sizeof (bef_interp));
 
