@@ -1,4 +1,6 @@
 CTX is a stack of contexts, or coordinate pairs that are used for reference
+by certain instructions (see below)
+
 callstack is a stack for return addresses used by subroutine instructions
 
 j (jump)             <x> <y>           PC=(x,y)
